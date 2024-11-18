@@ -1,0 +1,127 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+%\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+% \usepackage{gvv}                                        
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\usepackage{tikz}
+\usepackage{textcomp}
+\usetikzlibrary{circuits.ee.IEC, positioning}
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{Eigenvalue Calculation - Report}
+\author{Manognya Kundarapu - EE24BTECH11037
+}
+% \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+\begin{enumerate}
+    \item \textbf{Introduction:} The Eigenvalues are the special set of scalars associated with the system of linear equations. For a square matrix A, an eigenvalue $\lambda$ is a scalar that satisfies the equation:\\$A\textbf{v}=\lambda\textbf{v}$, $\textbf{v}$ is a non-zero vector called the eigenvector associated with $\lambda$.\\Some of the key applications of eigenvalues:
+    \begin{enumerate}
+        \item In dynamical systems, eigenvalues determine stability. Used in control systems and vibration analysis .
+        \item These are critical for diagonalizing matrices.
+        \item In data science and machine learning, eigenvalues help identify the most significant features of data.
+    \end{enumerate}
+    \item \textbf{Chosen Algorithm:} The \textbf{QR algorithm} is a powerful numerical method for finding the eigenvalues of a square matrix. It relies on QR decomposition and QR iteration.\\ \textbf{QR decomposition:}\\ It is a matrix factorization method that expresses a given square matrix $A$ as:\\ $A=QR$ \\$Q$ is an orthogonal matrix, $R$ is an upper triangular matrix.
+    The decomposition can be composed using\\ 
+    $\rightarrow$Gram-Schmidt orthogonalization.\\
+    $\rightarrow$Householder reflections\\
+    $\rightarrow$Givens rotations\\
+    \textbf{QR Iteration Algorithm:}\\ It basically applies the QR decomposition iteratively.
+    Algorithm steps:
+    \begin{enumerate}
+        \item[i)] Start with $A_0=A$, $A$ is input matrix.
+        \item[ii)] Compute $A_k=Q_kR_k$, the QR decomposition, from the $k_{th}$ step.
+        \item[iii)] Compute the next iterate as $A_{K+1}=R_kQ_k$. Continue the iteration until $A_k$ converges to a form where its diagonal elements approximate the eigenvalues of $A$.
+    \end{enumerate}
+    \textbf{Convergence:}\\
+    $\rightarrow$The QR algorithm typically converges to a form where the matrix $A_k$ becomes upper triangular, with its diagonal elements representing the eigenvalues of $A$.\\
+    $\rightarrow$The convergence rate depends on the separation of the eigenvalues of $A$.\\
+    \textbf{Shifts and Improved Convergence:}\\
+    The basic QR algorithm can be slow, especially for matrices with closely spaced eigenvalues. Shifts are used to accelerate convergence.\\
+    A \textbf{shift} modifies the QR iteration to focus on a specific eigenvalue. Instead of working with $A_k$, a shifted matrix $A_k-\mu I$ is used, where $\mu$ is the shift.\\
+    \textbf{Shifted QR Algorithm:}\\
+    $\rightarrow$Choose a shift: Select $\mu$, typically an eigenvalue estimate (e.g., the bottom-right entry of $A_k$).\\
+$\rightarrow$Shift the matrix: Compute the QR decomposition of $A_k-\mu I$ as ($A_k-\mu I$) = $Q_kR_k$.\\ 
+$\rightarrow$Update the matrix: Form the next iterate:\\
+$A_{k+1}=R_kQ_k+\mu I$\\
+$\rightarrow$Repeat: Iterate until convergence.\\
+\textbf{How shifts improve convergence:}\\
+    i) Better eigenvalue separation: By focusing the iteration on specific eigenvalues, shifts help the algorithm converge faster for poorly separated eigenvalues.\\
+    ii) Reduction of subdominant terms: Shifts minimize the contribution of less significant eigenvalue terms in the iterations, accelerating convergence.\\
+    iii) Wilkinson shift: A common choice for the shift $\mu$ is based on a more refined eigenvalue estimate, such as the eigenvalues of the $2x2$ trailing principal submatrix of $A_k$.\\
+    The QR algorithm iteratively decomposes a matrix and reassembles it to converge to its eigenvalues. Shifts significantly improve the convergence by targeting specific eigenvalues and reducing computational overhead, making the method both robust and efficient for a wide range of applications in numerical linear algebra.\\
+    \textbf{PROS}: Suitable for finding all eigenvalues of a matrix, often converges faster, also handles the complex values.\\
+    \textbf{CONS:} Requires some other transformations to improve efficiency and implementation is often complex.
+    \item \textbf{Time complexity:} The QR algorithm is $O\brak{n^3}$ for each iteration without optimization. Despite its theorotical time complexity of $O\brak{n^3}$, it becomes faster when enhanced with shifts. Steps:\\
+    
+    $\rightarrow$ QR decomposition: The QR decomposition itself requires $O(n^3)$ for a general dense matrix using algorithms like Householder reflections.\\
+    $\rightarrow$ Matrix multiplication: The subsequent $R_kQ_k$ multiplication also requires $O(n^3)$\\ 
+    
+$\rightarrow$Thus, each iteration is $O(n^3)$, and the total complexity depends on the number of iterations required for convergence, which is typically manageable for well-behaved matrices. With shifts, the number of iterations can often be drastically reduced.\\
+$\rightarrow$The QR algorithm, particularly with shifts, provides highly accurate eigenvalues for symmetric and general matrices. This is essential when precision is critical.
+\item \textbf{Comparison with other algorithms:}\\
+$\rightarrow$ \textbf{Power and Inverse Iteration Methods, $O\brak{n^2}$:} These are faster but provide only one eigenvalue at a time and require a good initial guess.\\
+$\rightarrow$ \textbf{Jacobi Method $O(n^4)$:} Simpler to implement but slower for larger matrices.\\
+$\rightarrow$\textbf{Divide and Conquer $O(n^3)$:} Similar complexity but less straightforward and not as widely implemented.\\
+$\rightarrow$ \textbf{Lanczos and Arnoldi $O(k\cdot n^2)$:} Effective for sparse matrices or approximating a subset of eigenvalues, but not as general-purpose.\\
+\textbf{Why QR Algorithm?}\\
+(a) Efficiency for Moderate Matrix Sizes:\\
+For matrices with moderate dimensions (e.g., $n\leq1000$), the$O(n^3)$ complexity is feasible on modern computational systems. Many real-world applications fall within this range.\\
+
+(b) Accuracy:\\
+The QR algorithm, particularly with shifts, provides highly accurate eigenvalues for symmetric and general matrices. This is essential when precision is critical.\\
+
+(c) General Applicability:\\
+The QR algorithm works for a wide range of matrices, making it a robust choice for assignments where the matrix structure (e.g., symmetry, sparsity) might not be guaranteed.\\
+
+Therefore, QR Algorithm achieves a favorable balance between computational effort and accuracy, justifying its use in this context.
+\end{enumerate}
+\end{document}
+  
+
